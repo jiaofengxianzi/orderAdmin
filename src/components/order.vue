@@ -11,20 +11,29 @@
       </div>
       <p class="plv2">订单信息</p>
       <orderInfo></orderInfo>
-      <p class="plv2">请选择支付方式</p>
-      <div class="payBox">
-        <div class="pay_input_box">
-          <ul class="js_pay_method">
-            <li id="order_alipay" v-bind:class="{ 'active' : isActive == 'alipay' }" @click="isActive ='alipay'">
-              <span class="bottomright"></span>
-            </li>
-            <li id="order_weixinpay" v-bind:class="{ 'active' : isActive == 'weixin' }" @click="isActive ='weixin'">
-              <span class="bottomright"></span>
-            </li>
-          </ul>
+      <div class="togglePay" v-if="payStatusNumber != '1'">
+        <p class="plv2">请选择支付方式</p>
+        <div class="payBox">
+          <div class="pay_input_box">
+            <ul class="js_pay_method">
+              <li id="order_alipay" v-bind:class="{ 'active' : isActive == 'alipay' }" @click="isActive ='alipay'">
+                <span class="bottomright"></span>
+              </li>
+              <li id="order_weixinpay" v-bind:class="{ 'active' : isActive == 'weixin' }" @click="isActive ='weixin'">
+                <span class="bottomright"></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <input type="button" @click="checkForm" class="pay_btn" value="确认支付">
+      </div>
+      <div class="paySuccess" v-if="payStatusNumber == '1'">
+        <p class="plv2">支付状态</p>
+        <div class="it">
+          <img src="../../src/assets/success.jpg" alt="">
+          <p>恭喜您，此订单支付成功。可至个人中心查看考生考试条。</p>
         </div>
       </div>
-      <input type="button" @click="checkForm" class="pay_btn" value="确认支付">
     </div>
     <!--微信支付二维码开始-->
     <div class="diolog" v-if="showErweima"></div>
@@ -41,6 +50,16 @@
       <a class="pay_erweima_box_price"><em>￥</em><span class="pay_money">{{orderData.amount | formatMoney}}</span></a>
     </div>
     <!--微信支付二维码结束-->
+    <!--支付成功开始-->
+      <div class="PayTip" v-if="false">
+        <a class="close" href="javascript:;">×</a>
+        <div class="it">
+          <img src="../../src/assets/fail.jpg" alt="">
+          <p>支付失败，请重新支付</p>
+        </div>
+      </div>
+
+    <!--支付成功结束-->
   </div>
 </template>
 
@@ -357,5 +376,55 @@
     left: 0;
     top: 0;
     z-index: 10000;
+  }
+  .paySuccess .it img{
+    margin-bottom: -6px;
+  }
+  .paySuccess .it p{
+    display: inline-block;
+    font-size: 17px;
+    color:#125b64;
+    font-weight: 600;
+    text-indent: 5px;
+  }
+
+
+
+
+
+  .PayTip{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50% , -50%);
+    background: #fff;
+    width: 344px;
+    border-radius: 3px;
+    min-height: 78px;
+    box-shadow: 1px 2px 4px #e4e1e1;
+    text-align: center;
+    z-index: 10001;
+  }
+  .PayTip .close{
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    text-decoration: none;
+    font-size: 22px;
+    color: #aaa;
+    cursor: pointer;
+  }
+  .PayTip .it{
+    margin-top:16px ;
+  }
+  .PayTip .it img{
+    margin-bottom:-6px ;
+  }
+  .PayTip .it p{
+    display: inline-block;
+    font-size: 17px;
+    color:#125b64;
+    font-weight: 600;
+    text-indent: 5px;
   }
 </style>

@@ -13,6 +13,7 @@ Vue.use(Router);
 const router = new Router({
   mode:'history',
   base:__dirname,
+
   routes: [
     {
       path: '/',
@@ -76,8 +77,8 @@ const router = new Router({
 
 router.beforeEach((to,from,next)=>{
 
-    if(to.meta.requireAuth){// 判断该路由是否需要登录权限
-      if(true){// 通过vuex state获取当前的token是否存在(口令)
+    if(to.matched.some(res => res.meta.requireAuth)){// 判断该路由是否需要登录权限
+      if(localStorage.getItem('userToken')){// 通过vuex state获取当前的token是否存在(口令)
         next();
       }else{
         next({
@@ -86,7 +87,6 @@ router.beforeEach((to,from,next)=>{
         })
       }
     }else{
-      console.log("不要验证")
       next();
     }
 })

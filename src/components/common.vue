@@ -3,7 +3,11 @@
     <div class="header">
       <div class="headCon">
         <div class="logo">
-          <!--<img src="jinanLogo.png" alt="暨南大学">-->
+          <img src="../../src/assets/logo.jpg" alt="暨南大学">
+        </div>
+        <div class="adminTitle" >
+          <img src="../../src/assets/computer.jpg" alt="">
+          远程预约报考系统
         </div>
         <div class="userBox">
           <ul>
@@ -20,7 +24,9 @@
       <router-view></router-view>
     </div>
     <div class="footer">
-      尾部
+      <p>地址：中国 广州市 黄埔大道西601号 邮编：510632</p>
+      <p>官网：http://www.jnu.edu.cn</p>
+      <p>版权所有©暨南大学 ICP备案号：粤ICP备 12087612号粤公网安备 44010602001461</p>
     </div>
     <tips></tips>
   </div>
@@ -30,12 +36,12 @@
   export default{
       data () {
           return {
-            name : JSON.parse(localStorage.getItem("userToken"))[0].token_type
+            name : JSON.parse(localStorage.getItem("userToken")).username
         }
       },
     methods : {
       loginOut : function(){
-        localStorage.removeItem('userInfo');
+        localStorage.removeItem('userToken');
         this.$router.push('/login')
       }
     },
@@ -61,7 +67,7 @@
     border-bottom:1px solid #e6e6e6;
   }
   .footer{
-    height :60px;
+    height :120px;
   }
   .header .headCon ,#content ,.footer{
     width: 1000px;
@@ -69,19 +75,40 @@
   }
   .header .headCon{
     /*background: #ececec;*/
+    height: 83px;
   }
   .header .logo{
     width: 180px;
     height: 83px;
     display: inline-block;
-
+    /*background: url('../../src/assets/logo.jpg') center center no-repeat;*/
+    float: left;
+    position: relative;
+  }
+  .header .logo:after{
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 30px;
+    background: #cdcdcd;
+    right: -3px;
+    top: 29px;
   }
   .header .logo img{
     display: block;
-    width: 100%;
+    margin-top: 11px;
+  }
+  .header .adminTitle{
+    display: inline-block;
+    margin: 28px 0 0 20px;
+    font-size: 28px;
+    vertical-align:middle;
+  }
+  .header .adminTitle img{
+    margin-bottom: -5px;
   }
   #content{
-    min-height: calc(100% - 204px);
+    min-height: calc(100% - 264px);
     overflow: hidden;
     background: #fff;
     margin: 20px auto 40px;
@@ -92,6 +119,13 @@
   }
   .footer{
     background: #0f6a7b;
+    padding: 29px 0;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .footer p{
+    color:#efefef;
+    font-size: 14px;
   }
 
   .userBox{
@@ -121,6 +155,12 @@
     border-radius: 5px;
   }
   .router-link-active{
-    /*border-bottom: 2px solid #0f6a7b;*/
+    text-decoration: underline !important;
+    color:#0f6a7b
+  }
+  @media screen and (min-width: 1400px){
+    .header .headCon, #content, .footer {
+      width: 1200px;
+    }
   }
 </style>

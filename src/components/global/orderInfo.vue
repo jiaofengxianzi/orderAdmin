@@ -12,7 +12,7 @@
         <td colspan="3">{{specialtyName}}</td>
         <td rowspan="100">
           <p class="status">{{getStatus}}</p>
-          <p><a href="">取消订单</a></p>
+          <p><a href="" v-if="payStatusNumber != '1'">取消订单</a></p>
         </td>
       </tr>
       <tr>

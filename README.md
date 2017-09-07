@@ -1,6 +1,6 @@
 # admin
 
-> A Vue.js project
+> 暨南大学远程预约报考系统
 
 ## Build Setup
 
