@@ -11,7 +11,7 @@ axios.defaults.baseURL = 'http://localhost:3000';
 axios.interceptors.request.use(
     config =>{
       if(store.state.userToken.access_token){//store.state.token判断是否存在token，如果存在的话，则每个http header都加上token
-        config.headers.Authorization = `Token ${store.state.userToken.access_token}`;
+        config.headers.Authorization = `Bearer ${store.state.userToken.access_token}`;
       }
       return config ;
     },

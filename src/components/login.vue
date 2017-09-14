@@ -21,7 +21,7 @@
         <button  v-on:click="doLogin">登录</button>
         <p>提示信息：</p>
         <p>1.若考生身份证和准考证核对无误，多次登录无效请联系：</p>
-        <p>0574-xxxxxxxx</p>
+        <p>0574—xxxxxxxx</p>
         <p>2.身份证与准考证应匹配，如多个准考证于其中任意一个准考证匹配即可。</p>
       </div>
     </div>
@@ -103,7 +103,7 @@ export default {
   }
   .loginBox{
     position: absolute;
-    left: 600px;
+    left: 650px;
     right: 0px;
     top: 113px;
     bottom: 0;
@@ -113,8 +113,8 @@ export default {
     border-radius: 5px;
     background-color: rgb(252, 252, 252);
     box-shadow: 0px 0px 30px 0px rgba(15, 76, 83, 0.14);
-    width: 530px;
-    height: 552px;
+    width: 532px;
+    height: 554px;
     text-align: center;
   }
   .loginBox .title{
@@ -130,19 +130,19 @@ export default {
     border-color: rgb(212, 212, 212);
     border-radius: 4px;
     background-color: rgb(252, 252, 252);
-    width: 410px;
-    height: 62px;
+    width: 408px;
+    height: 58px;
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     font-size: 19px;
     text-indent:20px;
   }
   .loginBox button{
     display: block;
-    margin:0 auto 42px;
+    margin:10px auto 42px;
     border-radius: 4px;
     background-color: rgb(18, 91, 100);
-    width: 121px;
+    width: 120px;
     height: 48px;
     border: none;
     color: #fff;
@@ -152,15 +152,17 @@ export default {
   .loginBox p{
     width: 412px;
     text-align: left;
-    margin:9px auto;
+    margin: 3px auto;
     font-size: 14px;
+    color: #35322e;
+    line-height: 1.5;
   }
   .loginBox input:active, input:focus{
-    border:1px solid #1c626b;
+    border:1px solid #125b64;
     border-radius: 4px;
     background-color: rgb(252, 252, 252);
     outline:none;
-    box-shadow: 0px 0px 5px 0px #1c626b;
+    box-shadow: 0px 0px 5px 0px #125b64;
     transition: all .2s linear;
   }
 

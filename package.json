@@ -10,7 +10,9 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "jquery": "^3.2.1",
     "promise-polyfill": "^6.0.2",
+    "qrcodejs2": "0.0.2",
     "vue": "^2.3.3",
     "vue-router": "^2.6.0",
     "vuex": "^2.3.1"

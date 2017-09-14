@@ -4,7 +4,7 @@
       <tbody>
       <tr>
         <td>订单编号</td>
-        <td colspan="3">{{orderData.oid}}</td>
+        <td colspan="3">{{order_id}}</td>
         <td>订单状态</td>
       </tr>
       <tr>
@@ -12,7 +12,7 @@
         <td colspan="3">{{specialtyName}}</td>
         <td rowspan="100">
           <p class="status">{{getStatus}}</p>
-          <p><a href="" v-if="payStatusNumber != '1'">取消订单</a></p>
+          <p><a href="javascript:;" @click="closeOrder" v-if="payStatusNumber != '1'">取消订单</a></p>
         </td>
       </tr>
       <tr>
@@ -60,13 +60,14 @@
       order_details : function(){
         var vm = this;
         var order_id = this.$store.state.order_id;
-        vm.$axios.post('order',{order_id:order_id}).then(function(order){
+        vm.$axios.post('http://192.168.50.10:11080/api/v1/order',{order_id:order_id}).then(function(order){
           //订单总信息
           vm.orderData = order.data.data;
+          localStorage.setItem("orderData",JSON.stringify(order.data.data))
           //报考信息
-          vm.detailsData = order.data.data.plan_details;
+          vm.detailsData = order.data.data.plan_detail;
           //专业名
-          vm.specialtyName = order.data.data.plan_details[0].specialty.specialty_name;
+          vm.specialtyName = order.data.data.plan_detail[0].specialty.specialty_name;
           //支付状态
           vm.payStatusNumber = order.data.data.status;
           //订单id
@@ -75,34 +76,14 @@
         })
       }
       ,
-      checkForm : function(){
+      closeOrder : function(){
         var vm = this;
-        var payNum = vm.isActive=="alipay"?1:2;
-        var PC = 1 ;
-        vm.$axios.post('order/pay',{order_id:vm.order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
-          //获取支付地址
-          vm.redirect_url = data.data.data.redirect_url;
-          if(vm.isActive=="alipay"){
-            window.open(vm.redirect_url);
-          }else if(vm.isActive=="weixin"){
-            vm.showErweima = true ;
-          }
-        });
-        //开始验证支付状态计时器
-        var loop = function(){
-          var order_id = vm.$store.state.order_id;
-          vm.$axios.post('order',{order_id:order_id}).then(function(order){
-            //支付状态
-            vm.payStatusNumber = order.data.data.status;
-            if(vm.payStatusNumber == 1){
-              vm.showErweima = false;
-              clearInterval(t)
-              vm.$store.dispatch('showTips', '已成功支付');
-            }
-          })
-        }
-        loop();
-        var t = setInterval(loop,2000)
+        vm.$axios.post('http://192.168.50.10:11080/api/v1/order/cancel',{order_id:vm.order_id}).then(function(data){
+          vm.$router.push('/index');
+          localStorage.removeItem('order_id');
+
+          //this.$store.dispatch('setOrderId', '');
+        })
       }
     },
     computed:{
@@ -156,13 +137,15 @@
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     font-size: 13px;
   }
   table td{
     padding: 9px 20px 9px 40px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     text-align: left;
+    font-size: 14px;
+    color: #606060;
   }
   table thead tr:first-child{
     background:#f5f5f5;

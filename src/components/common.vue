@@ -36,7 +36,8 @@
   export default{
       data () {
           return {
-            name : JSON.parse(localStorage.getItem("userToken")).username
+            name : JSON.parse(localStorage.getItem("userToken")).username,
+
         }
       },
     methods : {
@@ -90,7 +91,7 @@
     position: absolute;
     width: 1px;
     height: 30px;
-    background: #cdcdcd;
+    background: #ccc;
     right: -3px;
     top: 29px;
   }
@@ -101,8 +102,9 @@
   .header .adminTitle{
     display: inline-block;
     margin: 28px 0 0 20px;
-    font-size: 28px;
-    vertical-align:middle;
+    font-size: 30px;
+    vertical-align: middle;
+    color: #404040;
   }
   .header .adminTitle img{
     margin-bottom: -5px;
@@ -142,12 +144,13 @@
     padding-right: 0;
   }
   .userBox li.line{
-    border-right: 1px solid #b6b6b6;
+    border-right: 1px solid #c7c7c7 ;
   }
   .userBox li a{
     text-decoration: none;
     display: block;
     padding: 0 20px;
+    color: #404040;
   }
   select{
     width: 123px;

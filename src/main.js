@@ -7,11 +7,11 @@ import store from '@/store/index'
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios;
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
-  template: '<App/>',
-  components: { App }
+  //template: '<App/>',
+  //components: { App }
+  render : h=>h(App)
 });

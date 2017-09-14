@@ -11,7 +11,7 @@ export default new Vuex.Store({
       }
       return '';
     })(),
-    userData :[],
+    userInfo :'',
     ticket_number: '',
     user_card_id: '',
     tips: {
@@ -20,7 +20,7 @@ export default new Vuex.Store({
     },
     order_id:(function(){
       if(localStorage.getItem('order_id')){
-        return JSON.parse(localStorage.getItem("order_id"))
+        return localStorage.getItem("order_id")
       }
       return '';
     })()
@@ -37,15 +37,18 @@ export default new Vuex.Store({
     },
     set_user_info(state, val){
       state.userInfo = val || '';
+      val = val || '' ;
       localStorage.setItem("userInfo", JSON.stringify(val))
     },
     set_user_Token(state, val){
       state.userToken = val || '';
+      val = val || '' ;
       localStorage.setItem("userToken", JSON.stringify(val))
     },
     set_order_id(state, val){
       state.order_id = val || '';
-      localStorage.setItem("order_id", JSON.stringify(val))
+      val = val || '' ;
+      localStorage.setItem("order_id", val)
     }
   },
   actions :{

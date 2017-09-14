@@ -37,12 +37,10 @@
     </div>
     <!--微信支付二维码开始-->
     <div class="diolog" v-if="showErweima"></div>
-    <div class="pay_erweima_box" v-if="showErweima">
-      <a class="pay_erweima_box_close" @click="showErweima = false">×</a>
+    <div class="pay_erweima_box" v-show="showErweima">
+      <a class="pay_erweima_box_close" @click="close">×</a>
       <div class="erweimabox">
-        <div class="ewm_con">
-          <!--<p>正在加载...</p>-->
-          <img class="loadImg" :src="redirect_url" alt="微信支付二维码">
+        <div id="ewm_con">
         </div>
       </div>
       <p class="wz2">微信扫描二维码以完成支付</p>
@@ -58,21 +56,23 @@
           <p>支付失败，请重新支付</p>
         </div>
       </div>
-
     <!--支付成功结束-->
+    <div id="aaa"></div>
   </div>
 </template>
 
 <script>
+//  import QRCode from 'qrcodejs2'
   import axios from 'axios';
   import Step from '@/components/global/step'
   import userInfo from '@/components/global/userInfo'
   import orderInfo from '@/components/global/orderInfo'
+
   export default {
     name : 'order',
     data (){
       return {
-        orderData :[],
+        orderData :JSON.parse(localStorage.getItem("orderData")),
         detailsData:[],
         specialtyName:'',
         isActive:'alipay',
@@ -83,37 +83,24 @@
       }
     },
     methods : {
-
-      //获取订单详情
-      order_details : function(){
-        var vm = this;
-        var order_id = this.$store.state.order_id;
-        vm.$axios.post('order',{order_id:order_id}).then(function(order){
-          //订单总信息
-          vm.orderData = order.data.data;
-          //报考信息
-          vm.detailsData = order.data.data.plan_details;
-          //专业名
-          vm.specialtyName = order.data.data.plan_details[0].specialty.specialty_name;
-          //支付状态
-          vm.payStatusNumber = order.data.data.status;
-          //订单id
-          vm.order_id = order.data.data.oid;
-
-        })
-      }
-      ,
       checkForm : function(){
         var vm = this;
         var payNum = vm.isActive=="alipay"?1:2;
         var PC = 1 ;
-        vm.$axios.post('order/pay',{order_id:vm.order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
+        var order_id = localStorage.getItem('order_id');
+        console.log(order_id)
+        vm.$axios.post('http://192.168.50.10:11080/api/v1/order/pay',{order_id:order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
           //获取支付地址
           vm.redirect_url = data.data.data.redirect_url;
           if(vm.isActive=="alipay"){
             window.open(vm.redirect_url);
           }else if(vm.isActive=="weixin"){
             vm.showErweima = true ;
+            jQuery("#ewm_con").qrcode({
+              text: vm.redirect_url,
+              width:190,
+              height:190
+            });
           }
         });
         //开始验证支付状态计时器
@@ -131,6 +118,10 @@
         }
         loop();
         var t = setInterval(loop,2000)
+      },
+      close : function(){
+        this.showErweima = false ;
+        jQuery("#ewm_con canvas").remove();
       }
     },
     computed:{
@@ -161,7 +152,7 @@
     },
     mounted : function(){
       this.$nextTick(function(){
-        this.order_details();
+        require ('../../static/js/jquery.qrcode.js');
       })
     },
     filters :{
@@ -185,13 +176,15 @@
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     font-size: 13px;
   }
   table td{
     padding: 9px 20px 9px 40px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     text-align: left;
+    font-size: 14px;
+    color: #606060;
   }
   table thead tr:first-child{
     background:#f5f5f5;
@@ -208,10 +201,13 @@
     border-bottom: 1px solid #d0cfcf;
   }
   .padBox{
-    padding: 20px 20px 40px;
+    padding: 0px 20px 40px;
+    overflow: hidden;
   }
   p.plv2{
-    margin: 10px 0 10px;
+    margin: 20px 0 10px;
+    color: #404040;
+    font-size: 13px;
   }
   .pay_btn{
     display: block;
@@ -222,7 +218,7 @@
     background: #0f6a7b;
     color: #fff;
     cursor: pointer;
-    font-size: 17px;
+    font-size: 18px;
   }
   .status{
     color: #fa4d32;
@@ -232,7 +228,7 @@
     padding: 5px;
     border: 1px solid #fdc7c7;
     background: #ffe4e4;
-    color: #e60000;
+    color: #ec0d0d;
     font-size: 14px;
     margin: 20px 0;
   }
@@ -240,34 +236,36 @@
     display: inline-block;
     margin-right: 25px;
     position: relative;
-    width: 220px;
-    height: 80px;
+    width: 140px;
+    height: 42px;
     background-color: #f8fafc;
     border: 2px solid #f8fafc;
     cursor: pointer;
-    background-image: url('http://www.sxmaps.com/Public/Pc/images/order/zhifubao.png');
+    background: url('../../src/assets/aliPay.png') no-repeat;
+    background-position:34px
   }
   #order_weixinpay {
     display: inline-block;
     margin-right: 25px;
     position: relative;
-    width: 220px;
-    height: 80px;
+    width: 140px;
+    height: 42px;
     background-color: #f8fafc;
     border: 2px solid #f8fafc;
     cursor: pointer;
-    background-image: url('http://www.sxmaps.com/Public/Pc/images/order/weixin.png');
+    background: url('../../src/assets/wechatPay.png') no-repeat;
+    background-position:34px
   }
   .js_pay_method li.active {
-    border-color: #fa4d32 !important;
+    border-color: #166c78 !important;
   }
   .js_pay_method .active .bottomright {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     position: absolute;
     right: 0;
     bottom: 0;
-    background: url('http://www.sxmaps.com/Public/Pc/images/order/gou.png');
+    background: url('../../src/assets/gou.png') no-repeat;
   }
   /*二维码样式*/
   .pay_erweima_box{
@@ -330,14 +328,14 @@
     color: #fa6446;
     font-weight: 600;
   }
-  .pay_erweima_box .erweimabox .ewm_con{
+  .pay_erweima_box .erweimabox #ewm_con{
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
 
   }
-  .ewm_con p{
+  #ewm_con p{
     text-align: center;
     line-height: 190px;
     color: #666666;

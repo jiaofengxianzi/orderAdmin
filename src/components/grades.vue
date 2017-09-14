@@ -22,7 +22,26 @@
   </div>
 </template>
 <script>
+  export default{
+      data (){
+          return {
+            ticket_id : ''
+          }
+      },
+    methods : {
+      getGrades : function(){
+          var vm = this ;
+          this.ticket_id = JSON.parse(localStorage.getItem('userInfo'))[0].ticket_id,
+          this.$axios.post('http://192.168.50.10:11080/api/v1/user/test/results',{ticket_id : this.ticket_id})
+      }
+    },
 
+    mounted : function(){
+      this.$nextTick(function(){
+        this.getGrades()
+      })
+    }
+  }
 </script>
 <style scoped>
   .grades{

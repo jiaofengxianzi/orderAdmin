@@ -25,16 +25,17 @@
       name : 'userInfo',
       data () {
           return {
-            userData:[]
+            userData:[],//JSON.parse(localStorage.getItem("userInfo"))
           }
       },
       methods:{
         //获取自己的准考证信息
         userInfo :function(){
           var vm = this;
-          vm.$axios.post('tickets').then(function(userInfo){
+          vm.$axios.post('http://192.168.50.10:11080/api/v1/user/tickets').then(function(userInfo){
             vm.userData = userInfo.data.data;
             //vuex更新个人准考证信息
+            //console.log('userInfo'+ JSON.stringify(userInfo.data.data))
             vm.$store.dispatch('setUserInfo', userInfo.data.data);
           })
         }
@@ -54,13 +55,15 @@
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     font-size: 13px;
   }
   table td{
     padding: 9px 20px 9px 40px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #dbdbdb;
     text-align: left;
+    font-size: 14px;
+    color: #606060;
   }
   table thead tr:first-child{
     background:#f5f5f5;

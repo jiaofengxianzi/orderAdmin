@@ -7,15 +7,27 @@
     </div>
     <div class="noticeBox">
       <ul>
-        <li>2017圣诞节快乐圣诞节</li>
+        <li><a href="javascript:;" @click="notice()">2017圣诞节快乐圣诞节</a></li>
         <li>2017圣诞节快乐圣诞节</li>
         <li>2017圣诞节快乐圣诞节</li>
       </ul>
     </div>
+
   </div>
 </template>
 <script>
+  export default{
+      data (){
+          return {
 
+          }
+      },
+    methods : {
+      notice : function(){
+        this.$router.push('/notice/details')
+      }
+    }
+  }
 </script>
 <style scoped>
   .tab ul{

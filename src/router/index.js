@@ -8,6 +8,8 @@ import userCenter from '@/components/userCenter'
 import notice from '@/components/notice'
 import grades from '@/components/grades'
 import testStrip from '@/components/testStrip'
+import details from '@/components/details'
+import test from '@/components/test'
 
 Vue.use(Router);
 const router = new Router({
@@ -42,6 +44,12 @@ const router = new Router({
 
         },
         {
+          path: '/test',
+          name: 'test',
+          component: test,
+
+        },
+        {
           path: '/userCenter',
           name: 'userCenter',
           redirect:{path:'/userCenter/grades'},
@@ -62,8 +70,12 @@ const router = new Router({
         {
           path: '/notice',
           name: 'notice',
-          component: notice,
-
+          component: notice
+        },
+        {
+          path : '/notice/details',
+          name : 'details',
+          component : details
         }
       ]
     },
