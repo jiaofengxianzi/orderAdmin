@@ -1,5 +1,6 @@
 <template>
-  <div class="checkInfo">
+  <transition name="index">
+  <div  v-if="show" class="checkInfo">
     <div class="title">
       1、确认信息
     </div>
@@ -13,13 +14,21 @@
     <table>
       <thead>
         <tr>
-          <td colspan="4">报考专业：<span>{{specialtyName}}</span>　　　城市：<span>{{cityName}}</span>　　　考点选择：
-            <select v-model="place_id" @change="plan_ids = []">
-              <option value="-1">请选择考点</option>
-              <option v-for="options in palceArr" v-bind:value="options.id">
-                {{options.place_name}}
-              </option>
-            </select>
+          <td colspan="5">报考专业：<span>{{specialtyName}}</span>　　　城市：<span>{{cityName}}</span>　　　考点选择：
+            <!--<select v-model="place_id" @change="plan_ids = []">-->
+              <!--<option value="-1">请选择考点</option>-->
+              <!--<option v-for="options in palceArr" v-bind:value="options.id">-->
+                <!--{{options.place_name}}-->
+              <!--</option>-->
+            <!--</select>-->
+            <el-select v-model="place_id"  @change="plan_ids = []"  placeholder="请选择">
+              <el-option
+                v-for="item in palceArr"
+                :key="item.id"
+                :label="item.place_name"
+                :value="item.id">
+              </el-option>
+            </el-select>
           </td>
         </tr>
       </thead>
@@ -28,16 +37,18 @@
           <td>考试日期</td>
           <td>考试时间</td>
           <td>课程代号</td>
+          <!--<td>所属考点</td>-->
           <td>报考课程名称</td>
         </tr>
         <!--.data.plan_details-->
         <tr v-for="item in detailsData" id="wt" :arr="item.exam_id.indexOf(place_id)" :class="{'no-drop' : (item.exam_id.indexOf(place_id))>=0?false:true}">
-          <td>{{item.test_start_date}}</td>
-          <td>{{item.test_end_date}}</td>
+          <td>{{item.format_exam_date.date}}</td>
+          <td>{{item.format_exam_date.hour}}</td>
           <td>{{item.course_code}}</td>
+          <!--<td><span v-for="palce in item.exam_place" class="placeSpan">{{palce.place_name}}</span></td>-->
           <td>
-            <label>
-              <input type="checkbox" :class="'checkbox'" :value="item.id" checked v-model="plan_ids"  :disabled="(item.exam_id.indexOf(place_id))>=0?false:true"> {{item.course_name}}
+            <label class="checkLa">
+              <input type="checkbox" :class="'checkbox'" v-if="!item.is_reserve" :value="item.id"  v-model="plan_ids"  :disabled="(item.exam_id.indexOf(place_id))>=0?false:true"> {{item.course_name}} <span v-if="item.is_reserve" class="checkedTest">(已报考)</span>
             </label>
           </td>
         </tr>
@@ -46,6 +57,7 @@
       <input type="button" @click="checkForm" value="信息准确，进入下一步">
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -56,11 +68,12 @@ export default {
     name : 'index',
     data (){
         return {
+          show: false,
           detailsData :[],//报考详情
           cityName:'',//城市
           specialtyName:'',//专业
           exam_place:[],//考点
-          place_id :'-1',//考点默认选择
+          place_id :'',//考点默认选择
           plan_ids :[],//报考的考试计划
           ticket_id :'',
           userData:[],
@@ -68,18 +81,17 @@ export default {
         }
     },
     methods : {
-
         //获取自己的准考证信息
         userInfo :function(){
           var vm = this;
-          vm.$axios.post('http://192.168.50.10:11080/api/v1/user/tickets').then(function(userInfo){
+          vm.$axios.post('user/tickets').then(function(userInfo){
             vm.userData = userInfo.data.data;
             vm.ticket_id = userInfo.data.data[0].ticket_id;
             //vuex更新个人准考证信息
             vm.$store.dispatch('setUserInfo', userInfo.data.data);
 
             //获取当前考试计划信息
-            vm.$axios.post('http://192.168.50.10:11080/api/v1/user/plans',{'ticket_id':vm.ticket_id}).then(function(plan){
+            vm.$axios.post('user/plans',{'ticket_id':vm.ticket_id}).then(function(plan){
               //每一条考试计划加exam_id
 
               plan.data.data.plan_details.forEach(function(i){
@@ -120,6 +132,7 @@ export default {
               };
               //console.log(palceArr.filter())
               vm.palceArr = palceArr1.filter1();
+
               //去重
 //              Array.prototype.unique = function(){
 //                var res = [];
@@ -137,7 +150,7 @@ export default {
           })
         },
         checkForm : function(){
-          if(this.place_id == '-1'){
+          if(this.place_id == '-1' ||this.place_id == ''){
             this.$store.dispatch('showTips', '请选择考点');
             return false;
           };
@@ -150,7 +163,7 @@ export default {
           var vm = this;
           //从子vuex获取准考证id
           vm.ticket_id = this.$store.state.userInfo[0].ticket_id;
-          vm.$axios.post('http://192.168.50.10:11080/api/v1/plan/confirm',{place_id:vm.place_id,plan_ids:vm.plan_ids,ticket_id:vm.ticket_id}).then(function(idData){
+          vm.$axios.post('plan/confirm',{place_id:vm.place_id,plan_ids:vm.plan_ids,ticket_id:vm.ticket_id}).then(function(idData){
             if(idData){
               //vuex更新订单id order_id
               vm.$store.dispatch('setOrderId', idData.data.data.order_id);
@@ -169,7 +182,7 @@ export default {
         this.$nextTick(function(){
           this.userInfo();
           //this.plan_details();
-
+          this.show = true ;
         })
     },
   components:{
@@ -179,29 +192,13 @@ export default {
 };
 
 </script>
-<style scoped="">
-  table{
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #dbdbdb;
-    font-size: 13px;
-  }
-  table td{
+<style>
+  table td {
     padding: 9px 20px 9px 40px;
     border: 1px solid #dbdbdb;
     text-align: left;
     font-size: 14px;
-    color: #606060;
-  }
-  table thead tr:first-child{
-    background:#f5f5f5;
-  }
-  table tbody tr:nth-child(odd){
-    background:#fafafa;
-  }
-  p{
-    margin: 0
+    color: #000000;
   }
   .checkInfo .title{
     padding: 12px 20px;
@@ -237,6 +234,10 @@ export default {
     border-radius: 5px;
     padding-left: 10px;
   }
+  .el-input__inner{
+    height:28px !important;
+  }
+
   .tips{
     padding: 5px;
     border: 1px solid #fdc7c7;
@@ -245,10 +246,21 @@ export default {
     font-size: 14px;
     margin: 20px 0;
   }
-  .no-drop *{
+  .checkLa{
+    cursor: pointer;
+  }
+  .no-drop * {
     cursor: no-drop;
-    background: #ffeeee;
+    background: #f6f6f6;
     color: #bfbfbf;
-
+  }
+  .placeSpan{
+    border:1px solid #aaa;
+    padding: 0 2px;
+    margin: 0 1px;
+    display: inline-block;
+  }
+  .checkedTest{
+    color: #42b983;
   }
 </style>

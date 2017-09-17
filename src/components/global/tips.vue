@@ -34,6 +34,7 @@
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.47);
     border-radius: 5px;
     text-align: center;
+    z-index: 10002;
   }
   p{
     margin: 0 0 10px;

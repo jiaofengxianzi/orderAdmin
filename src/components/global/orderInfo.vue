@@ -60,7 +60,7 @@
       order_details : function(){
         var vm = this;
         var order_id = this.$store.state.order_id;
-        vm.$axios.post('http://192.168.50.10:11080/api/v1/order',{order_id:order_id}).then(function(order){
+        vm.$axios.post('order',{order_id:order_id}).then(function(order){
           //订单总信息
           vm.orderData = order.data.data;
           localStorage.setItem("orderData",JSON.stringify(order.data.data))
@@ -78,9 +78,9 @@
       ,
       closeOrder : function(){
         var vm = this;
-        vm.$axios.post('http://192.168.50.10:11080/api/v1/order/cancel',{order_id:vm.order_id}).then(function(data){
+        vm.$axios.post('order/cancel',{order_id:vm.order_id}).then(function(data){
           vm.$router.push('/index');
-          localStorage.removeItem('order_id');
+          localStorage.setItem('order_id','');
 
           //this.$store.dispatch('setOrderId', '');
         })
@@ -114,6 +114,9 @@
     },
     mounted : function(){
       this.$nextTick(function(){
+        if(localStorage.getItem("order_id") == ''){
+          this.$router.push('/index');
+        }
         this.order_details();
       })
     },
@@ -133,29 +136,7 @@
 
 </script>
 <style scoped="">
-  table{
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #dbdbdb;
-    font-size: 13px;
-  }
-  table td{
-    padding: 9px 20px 9px 40px;
-    border: 1px solid #dbdbdb;
-    text-align: left;
-    font-size: 14px;
-    color: #606060;
-  }
-  table thead tr:first-child{
-    background:#f5f5f5;
-  }
-  table tbody tr:nth-child(odd){
-    background:#fafafa;
-  }
-  p{
-    margin: 0
-  }
+
   .checkInfo .title{
     padding: 10px 20px;
     font-size: 16px;

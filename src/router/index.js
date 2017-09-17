@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import NoFound from '@/components/global/NoFound'
 import Login from '@/components/login'
 import index from '@/components/index'
 import common from '@/components/common'
@@ -9,7 +10,6 @@ import notice from '@/components/notice'
 import grades from '@/components/grades'
 import testStrip from '@/components/testStrip'
 import details from '@/components/details'
-import test from '@/components/test'
 
 Vue.use(Router);
 const router = new Router({
@@ -17,6 +17,7 @@ const router = new Router({
   base:__dirname,
 
   routes: [
+    {path: '*', component: NoFound},
     {
       path: '/',
       name: 'Login',
@@ -41,12 +42,6 @@ const router = new Router({
           path: '/order',
           name: 'order',
           component: order,
-
-        },
-        {
-          path: '/test',
-          name: 'test',
-          component: test,
 
         },
         {
@@ -85,12 +80,16 @@ const router = new Router({
       component: Login
     }
   ]
-})
-
+});
+//路由切换检测token
 router.beforeEach((to,from,next)=>{
 
     if(to.matched.some(res => res.meta.requireAuth)){// 判断该路由是否需要登录权限
       if(localStorage.getItem('userToken')){// 通过vuex state获取当前的token是否存在(口令)
+        // let info = JSON.parse(localStorage.getItem('userToken'));
+        // //检查token有效期
+        // let nowTime = Math.round(new Date().getTime() / 1000);
+        // let overTime = nowTime - info.responseTime
         next();
       }else{
         next({
@@ -101,6 +100,7 @@ router.beforeEach((to,from,next)=>{
     }else{
       next();
     }
-})
+});
+//路由切换动画效果
 
 export default router

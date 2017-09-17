@@ -42,8 +42,9 @@ export default {
   data () {
     return {
       msg: '远程预约考试系统',
-      user_card_id : '441825199402200019',
-      ticket_number : '4499901',
+      ticket_number : '1',
+      user_card_id : '123456',
+
     }
   },
   methods : {
@@ -51,7 +52,7 @@ export default {
 
         var vm = this;
 
-        vm.$axios.post('http://192.168.50.10:11080/api/v1/third_login/user_card',{ticket_number:this.ticket_number,user_card_id:this.user_card_id})
+        vm.$axios.post('third_login/user_card',{ticket_number:this.ticket_number,user_card_id:this.user_card_id})
           .then(function (response) {
             var data = response.data;
             if(data.ret === 0){

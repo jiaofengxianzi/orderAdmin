@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import '@/assets/css/style.css'
 export default {
   name: 'app'
 }
@@ -17,7 +18,6 @@ export default {
   color: #2c3e50;
   height: 100%;
   line-height: 1;
-  /*font-family: "Microsoft Himalaya";*/
 }
   html,body{
     margin: 0;

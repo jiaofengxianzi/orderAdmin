@@ -32,7 +32,7 @@
         //获取自己的准考证信息
         userInfo :function(){
           var vm = this;
-          vm.$axios.post('http://192.168.50.10:11080/api/v1/user/tickets').then(function(userInfo){
+          vm.$axios.post('user/tickets').then(function(userInfo){
             vm.userData = userInfo.data.data;
             //vuex更新个人准考证信息
             //console.log('userInfo'+ JSON.stringify(userInfo.data.data))

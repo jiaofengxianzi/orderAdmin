@@ -1,5 +1,6 @@
 <template>
-  <div class="checkInfo">
+  <transition name="index">
+  <div v-if="show" class="checkInfo">
     <div class="title">
       2、订单确认并支付
     </div>
@@ -10,7 +11,40 @@
         您的报考信息已经确认完毕，我们将根据上述信息为您进行报考。
       </div>
       <p class="plv2">订单信息</p>
-      <orderInfo></orderInfo>
+      <table v-model="orderData">
+        <tbody>
+        <tr>
+          <td>订单编号</td>
+          <td colspan="3">{{order_id}}</td>
+          <td>订单状态</td>
+        </tr>
+        <tr>
+          <td>报考专业</td>
+          <td colspan="3">{{specialtyName}}</td>
+          <td rowspan="100">
+            <p class="status">{{getStatus}}</p>
+            <p><a href="javascript:;" @click="closeOrderBox = true " v-if="payStatusNumber != '1'">取消订单</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td>序号</td>
+          <td>考试时间</td>
+          <td>报考科目</td>
+          <td>单价</td>
+
+        </tr>
+        <tr v-for="(item,key) in detailsData">
+          <td>{{key+1}}</td>
+          <td>{{item.format_exam_date.date}}　{{item.format_exam_date.hour}}</td>
+          <td>{{item.course_name}}</td>
+          <td>{{item.price | formatMoney}}</td>
+        </tr>
+        <tr>
+          <td style="text-align: center" colspan="4">你共报考 <span>{{detailsData.length}}</span> 科，共计报考费 ￥<span>{{orderData.amount | formatMoney}}</span>元</td>
+
+        </tr>
+        </tbody>
+      </table>
       <div class="togglePay" v-if="payStatusNumber != '1'">
         <p class="plv2">请选择支付方式</p>
         <div class="payBox">
@@ -35,6 +69,8 @@
         </div>
       </div>
     </div>
+
+
     <!--微信支付二维码开始-->
     <div class="diolog" v-if="showErweima"></div>
     <div class="pay_erweima_box" v-show="showErweima">
@@ -48,17 +84,62 @@
       <a class="pay_erweima_box_price"><em>￥</em><span class="pay_money">{{orderData.amount | formatMoney}}</span></a>
     </div>
     <!--微信支付二维码结束-->
-    <!--支付成功开始-->
-      <div class="PayTip" v-if="false">
-        <a class="close" href="javascript:;">×</a>
+    <!--支付结果开始-->
+    <div class="diolog" v-if="payResult"></div>
+      <div class="PayTip" v-if="payResult">
+        <a class="close" href="javascript:;" @click="payResult = false">×</a>
         <div class="it">
-          <img src="../../src/assets/fail.jpg" alt="">
-          <p>支付失败，请重新支付</p>
+          <img src="../../src/assets/success.png" alt="">
+          <p>恭喜您，支付成功</p>
+        </div>
+        <div class="content">
+          <p><label>你的支付方式：</label><span>{{isActive}}</span></p>
+          <p><label>你的订单号：</label><span>{{order_id}}</span></p>
+          <p><label>你的支付金额：</label><span>{{orderData.amount | formatMoney}}</span></p>
+        </div>
+        <div class="btnBox">
+          <router-link to="/userCenter/testStrip" >查看订单详情</router-link>
+          <router-link to="/index" class="b2">再去预约</router-link>
         </div>
       </div>
-    <!--支付成功结束-->
-    <div id="aaa"></div>
+    <!--支付结果结束-->
+    <!--取消订单开始-->
+    <div class="diolog" v-if="closeOrderBox"></div>
+    <div id="closeOrder" v-show="closeOrderBox">
+      <p class="title">温馨提示 <a href="javascript:;" @click="closeOrderBox = false">×</a></p>
+
+      <div class="content">
+        <p >您是否确认取消订单？</p>
+        <p >取消订单将回到信息确认页。</p>
+      </div>
+
+      <div class="closeBtnBox">
+        <button @click="closeOrder">确认</button>
+        <button class="b2" @click="closeOrderBox = false">取消</button>
+      </div>
+    </div>
+    <!--取消订单结束-->
+    <!--支付宝等待开始-->
+    <div class="diolog" v-if="aliPay"></div>
+    <div id="aliPay" v-show="aliPay">
+      <a class="close" href="javascript:;" @click="aliPay=false">×</a>
+      <div class="it">
+        <img src="../../src/assets/zhifubao.png" alt="">
+        <p>支付宝支付</p>
+      </div>
+      <div class="content">
+        <p>请在打开的页面完成支付</p>
+        <p>支付完成前请不要关闭此窗口</p>
+        <p class="loadBox" v-if="payFail"><img src="../../src/assets/loading.gif" alt="">支付未完成...</p>
+      </div>
+      <div class="btnBox">
+        <button @click="alipayWait">已完成支付</button>
+        <button class="b2" onclick="window.location.reload()">支付遇到问题</button>
+      </div>
+    </div>
+    <!--支付宝等待结束-->
   </div>
+  </transition>
 </template>
 
 <script>
@@ -72,6 +153,7 @@
     name : 'order',
     data (){
       return {
+        show: false,
         orderData :JSON.parse(localStorage.getItem("orderData")),
         detailsData:[],
         specialtyName:'',
@@ -79,21 +161,56 @@
         payStatusNumber : '',
         order_id:'',
         redirect_url:'',
-        showErweima:false
+        showErweima:false,
+        closeOrderBox : false,
+        aliPay : false,
+        payResult : false,
+        payFail : false
       }
     },
     methods : {
+      //获取订单详情
+      order_details : function(){
+        var vm = this;
+        var order_id = this.$store.state.order_id;
+        vm.$axios.post('order',{order_id:order_id}).then(function(order){
+          //订单总信息
+          vm.orderData = order.data.data;
+          localStorage.setItem("orderData",JSON.stringify(order.data.data))
+          //报考信息
+          vm.detailsData = order.data.data.plan_detail;
+          //专业名
+          vm.specialtyName = order.data.data.plan_detail[0].specialty.specialty_name;
+          //支付状态
+          vm.payStatusNumber = order.data.data.status;
+          //订单id
+          vm.order_id = order.data.data.oid;
+
+        })
+      }
+      ,
+      closeOrder : function(){
+          var vm = this;
+          vm.$axios.post('order/cancel',{order_id:vm.order_id}).then(function(data){
+            vm.$router.push('/index');
+            localStorage.setItem('order_id','');
+
+            //this.$store.dispatch('setOrderId', '');
+          })
+      },
       checkForm : function(){
         var vm = this;
         var payNum = vm.isActive=="alipay"?1:2;
         var PC = 1 ;
         var order_id = localStorage.getItem('order_id');
-        console.log(order_id)
-        vm.$axios.post('http://192.168.50.10:11080/api/v1/order/pay',{order_id:order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
+        //console.log(order_id)
+        vm.$axios.post('order/pay',{order_id:order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
           //获取支付地址
           vm.redirect_url = data.data.data.redirect_url;
           if(vm.isActive=="alipay"){
+            vm.aliPay = true ;
             window.open(vm.redirect_url);
+            return false;
           }else if(vm.isActive=="weixin"){
             vm.showErweima = true ;
             jQuery("#ewm_con").qrcode({
@@ -101,27 +218,50 @@
               width:190,
               height:190
             });
+            setInterval(vm.loop,2000)
+            return false;
           }
         });
-        //开始验证支付状态计时器
-        var loop = function(){
+
+      },
+      loop : function(){
+          //开始验证支付状态计时器
+
+          var vm = this;
           var order_id = vm.$store.state.order_id;
           vm.$axios.post('order',{order_id:order_id}).then(function(order){
             //支付状态
             vm.payStatusNumber = order.data.data.status;
             if(vm.payStatusNumber == 1){
               vm.showErweima = false;
-              clearInterval(t)
-              vm.$store.dispatch('showTips', '已成功支付');
+              vm.payResult = true;
+              //clearInterval(vm.loop);
+              //vm.$store.dispatch('showTips', '已成功支付');
             }
           })
-        }
-        loop();
-        var t = setInterval(loop,2000)
+
+
       },
       close : function(){
         this.showErweima = false ;
         jQuery("#ewm_con canvas").remove();
+      },
+      alipayWait : function(){
+
+        var vm = this;
+        var order_id = vm.$store.state.order_id;
+        vm.$axios.post('order',{order_id:order_id}).then(function(order){
+          //支付状态
+          vm.payStatusNumber = order.data.data.status;
+          if(vm.payStatusNumber == 1){
+              vm.payResult = true;
+              vm.aliPay = false;
+            //vm.$store.dispatch('showTips', '已成功支付');
+          }else{
+              vm.payFail = true ;
+              setTimeout(function(){ return vm.payFail = false},1500)
+          }
+        })
       }
     },
     computed:{
@@ -151,7 +291,13 @@
       }
     },
     mounted : function(){
+
       this.$nextTick(function(){
+        this.show = true ;
+        if(localStorage.getItem("order_id") == ''){
+          this.$router.push('/index');
+        }
+        this.order_details();
         require ('../../static/js/jquery.qrcode.js');
       })
     },
@@ -172,29 +318,7 @@
 
 </script>
 <style scoped="">
-  table{
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #dbdbdb;
-    font-size: 13px;
-  }
-  table td{
-    padding: 9px 20px 9px 40px;
-    border: 1px solid #dbdbdb;
-    text-align: left;
-    font-size: 14px;
-    color: #606060;
-  }
-  table thead tr:first-child{
-    background:#f5f5f5;
-  }
-  table tbody tr:nth-child(odd){
-    background:#fafafa;
-  }
-  p{
-    margin: 0
-  }
+
   .checkInfo .title{
     padding: 10px 20px;
     font-size: 16px;
@@ -396,10 +520,10 @@
     left: 50%;
     transform: translate(-50% , -50%);
     background: #fff;
-    width: 344px;
+    width: 444px;
     border-radius: 3px;
-    min-height: 78px;
-    box-shadow: 1px 2px 4px #e4e1e1;
+    min-height: 250px;
+    box-shadow: 0px 0px 17px #626262;
     text-align: center;
     z-index: 10001;
   }
@@ -424,5 +548,47 @@
     color:#125b64;
     font-weight: 600;
     text-indent: 5px;
+  }
+  .PayTip .content p{
+    font-size: 15px;
+    color:#000;
+    text-align: left;
+    margin: 20px 0;
+  }
+  .PayTip .content{
+    margin: 25px 0;
+  }
+  #aliPay .content img{
+    width: 30px;
+    vertical-align: -7px;
+    margin-right: 13px;
+  }
+  #aliPay .loadBox{
+    color: red;
+    margin: 0px auto;
+  }
+  .PayTip .content p label{
+    display: inline-block;
+    width: 177px;
+    text-align: right;
+
+  }
+  .PayTip .btnBox a{
+    width: 136px;
+    height: 31px;
+    border: 1px solid #0f6a7b;
+    background: #0f6a7b;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    margin-right: 7px;
+    display: inline-block;
+    line-height: 31px;
+    text-decoration: none;
+  }
+  .PayTip .btnBox a.b2{
+    border: 1px solid #0f6a7b;
+    background: #fff;
+    color: #0f6a7b;
   }
 </style>

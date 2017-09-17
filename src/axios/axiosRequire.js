@@ -5,8 +5,8 @@ import router from '@/router'
 //超时时间
 axios.defaults.timeout = 5000;
 //axios.defaults.baseURL = '//192.168.30.215:3000';
-axios.defaults.baseURL = 'http://localhost:3000';
-//axios.defaults.baseURL = 'http://192.168.50.10:11080/api/v1/user/';
+//axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://192.168.50.10:11080/api/v1/';
 // http request 拦截器
 axios.interceptors.request.use(
     config =>{
