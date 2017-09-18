@@ -8,7 +8,7 @@
           <td>考试科目</td>
           <td>考试成绩</td>
         </tr>
-        <tr v-if="gradesData.length != 0" v-for="grades in gradesData">
+        <tr v-if="gradesData.length != 0"  v-for="grades in gradesData">
           <td>{{grades.test_date}}</td>
           <td>{{grades.course_name}}</td>
           <td>{{grades.results}}</td>

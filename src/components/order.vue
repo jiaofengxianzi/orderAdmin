@@ -560,6 +560,7 @@
   }
   #aliPay .content img{
     width: 30px;
+    height:30px;
     vertical-align: -7px;
     margin-right: 13px;
   }

@@ -42,16 +42,21 @@ export default {
   data () {
     return {
       msg: '远程预约考试系统',
-      ticket_number : '1',
-      user_card_id : '123456',
-
+      ticket_number : '',
+      user_card_id : ''
     }
   },
   methods : {
       doLogin : function(){
 
         var vm = this;
-
+        if(vm.ticket_number==''){
+          vm.$message.error('请输入你的准考证');
+          return ;
+        }else if(vm.user_card_id == ''){
+          vm.$message.error('请输入你的身份证');
+          return ;
+        }
         vm.$axios.post('third_login/user_card',{ticket_number:this.ticket_number,user_card_id:this.user_card_id})
           .then(function (response) {
             var data = response.data;
@@ -65,7 +70,7 @@ export default {
               }
 
             }else{
-                alert(data.msg)
+              vm.$message.error(data.res_info);
             }
           })
           .catch(function (response) {
@@ -123,7 +128,7 @@ export default {
     text-align: center;
     font-size: 24px;
     color: rgba(0,0,0,.7);
-    margin: 40px 0;
+    margin: 40px 0 20px;
   }
   .loginBox input{
     border-style: solid;
@@ -191,5 +196,11 @@ export default {
     font-size: 14px;
     line-height: 1;
     margin: 0 0 12px 0;
+  }
+  .errorMsg{
+    width: 410px;
+    text-align: left;
+    height: 20px;
+    margin: auto;
   }
 </style>

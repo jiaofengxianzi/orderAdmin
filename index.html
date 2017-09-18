@@ -3,9 +3,23 @@
   <head>
     <meta charset="utf-8">
     <title>暨南大学-远程预约考试系统</title>
+    <style>
+      #browserTips{ display: none; width: 400px; margin: 20px auto; font-family: "微软雅黑"; font-size: 16px; }
+      #browserTips p{ font-size: 14px; text-indent: 28px; }
+      #browserTips a{ color: blue; }
+    </style>
   </head>
   <body>
+    <div id="browserTips">
+      温馨提示：
+      <p>检测到您使用的浏览器版本过低，为了您更好的使用平台，建议使用<a href="https://www.baidu.com/s?wd=%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8&tn=98012088_5_dg&ch=11">谷歌浏览器</a>或360极速模式</p>
+    </div>
     <div id="app"></div>
+    <!--<script>-->
+      <!--if(navigator.userAgent.indexOf('Trident') > -1){-->
+        <!--document.getElementById('browserTips').style.display = 'block';-->
+      <!--}-->
+    <!--</script>-->
   </body>
   <script src="/static/js/jquery.js"></script>
   <script src="/static/js/jquery.qrcode.js"></script>

@@ -32,16 +32,16 @@
     margin: 0;
     height: 40px;
     border-bottom: 1px solid#d9d9d9;
+    box-shadow: 0px 1px 0 #d9d9d9\9;
     line-height: 39px;
   }
   .tab ul li{
     display: inline-block;
-
     margin: 0 10px 0 20px;
     cursor: pointer;
   }
   .tab ul li a{
-    text-decoration: none;
+    text-decoration: none !important;
     padding: 0 15px;
     display: block;
   }
@@ -56,6 +56,10 @@
     line-height: 43px;
     border-bottom: 1px solid#dfdfdf;
     cursor: pointer;
+    box-shadow: 0px 1px 0 #d9d9d9\9;
+  }
+  .noticeBox ul li a{
+    text-decoration: none !important;
   }
   .noticeBox ul li:hover{
     color:#0f6a7b

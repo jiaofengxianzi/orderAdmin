@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div id="content">
+    <div id="content" >
       <router-view></router-view>
     </div>
     <div class="footer">
@@ -37,7 +37,7 @@
       data () {
           return {
             name : JSON.parse(localStorage.getItem("userToken")).username,
-
+            screenHeight: document.body.clientHeight-264,
         }
       },
     methods : {
@@ -48,10 +48,21 @@
     },
     mounted : function(){
       this.$nextTick(function () {
-
+        document.getElementById('content').style.minHeight=this.screenHeight+"px";//页面初始化
+        window.onresize = () => {
+          return (() => {
+            this.screenHeight = document.body.clientHeight
+          })()
+        }
 
       })
 
+    },
+    watch : {
+      screenHeight (val) {
+        this.screenHeight = val ;
+        document.getElementById('content').style.minHeight=this.screenHeight-264+"px";//检测窗口的大小，并赋值
+      }
     },
     components :{
       tips
