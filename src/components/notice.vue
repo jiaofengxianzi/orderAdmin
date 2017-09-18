@@ -7,9 +7,7 @@
     </div>
     <div class="noticeBox">
       <ul>
-        <li><a href="javascript:;" @click="notice()">2017圣诞节快乐圣诞节</a></li>
-        <li>2017圣诞节快乐圣诞节</li>
-        <li>2017圣诞节快乐圣诞节</li>
+        <li><a href="javascript:;" @click="notice()">暨南大学考试预约系统通知功能</a> <span class="notice-date">2017-09-18</span></li>
       </ul>
     </div>
 
@@ -62,4 +60,10 @@
   .noticeBox ul li:hover{
     color:#0f6a7b
   }
+
+  .noticeBox .notice-date{
+    float: right;
+    margin-right: 10px;
+  }
+
 </style>

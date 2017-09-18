@@ -12,7 +12,7 @@
         <tr v-for="item in userData">
           <td v-text="item.name"></td>
           <td v-text='item.user_card_id'></td>
-          <td v-text='item.ticket_id'></td>
+          <td v-text='item.number'></td>
           <td v-text='item.mobile'></td>
           <td v-text='item.specialty_name'></td>
         </tr>
