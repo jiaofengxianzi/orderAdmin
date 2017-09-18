@@ -13,7 +13,7 @@
           <td>{{grades.course_name}}</td>
           <td>{{grades.results}}</td>
         </tr>
-        <tr v-else>
+        <tr v-if="gradesData.length == 0">
           <td colspan="3">暂无考试成绩</td>
         </tr>
       </tbody>
