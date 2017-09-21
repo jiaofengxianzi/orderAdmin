@@ -8,13 +8,17 @@
           <td>准考证</td>
           <td>手机号</td>
           <td>报考专业</td>
+          <td>级别</td>
+          <!--<td></td>-->
         </tr>
-        <tr v-for="item in userData">
+        <tr v-for="item in userData" :class="{'selectTicket' : item.ticket_id != ticketId}">
           <td v-text="item.name"></td>
           <td v-text='item.user_card_id'></td>
           <td v-text='item.number'></td>
           <td v-text='item.mobile'></td>
           <td v-text='item.specialty_name'></td>
+          <td v-text='item.level_name'></td>
+          <!--<td style="color:#fff"><el-radio class="radio" v-model="ticketId" v-if="item.ticket_id ==ticketId" :label="item.ticket_id">.</el-radio></td>-->
         </tr>
       </tbody>
     </table>
@@ -26,6 +30,7 @@
       data () {
           return {
             userData:[],//JSON.parse(localStorage.getItem("userInfo"))
+            ticketId : JSON.parse(localStorage.getItem("userToken")).ticket_id
           }
       },
       methods:{
@@ -70,5 +75,12 @@
   }
   table tbody tr:nth-child(odd){
     background:#fafafa;
+  }
+  .el-radio {
+    color: rgba(255, 255, 255,0)
+  }
+  .selectTicket td{
+    background: #fff !important;
+    color: #dbdbdb !important;
   }
 </style>

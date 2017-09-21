@@ -57,6 +57,7 @@
     border-bottom: 1px solid#dfdfdf;
     cursor: pointer;
     box-shadow: 0px 1px 0 #d9d9d9\9;
+    display: block !important;
   }
   .noticeBox ul li a{
     text-decoration: none !important;

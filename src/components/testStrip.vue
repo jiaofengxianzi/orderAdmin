@@ -54,7 +54,7 @@
             <td>考试科目</td>
             <td>考试地点</td>
             <td>考场代号</td>
-            <td rowspan="100" style="width:200px;line-height: 1.2;color:#f44336;">考试注意事项考试注意事项考试注意事项考试注意事项考试注意事项考试注意事项考试注意事项考试注意事项遵守考场纪律！</td>
+            <td rowspan="100" style="width:200px;line-height: 1.2;color:#f44336;">带好准考证，身份证，自觉遵守考场纪律！</td>
           </tr>
           <tr v-for="item in detailsData[0]">
             <td>{{item.format_exam_date.date}}　{{item.format_exam_date.hour}}</td>

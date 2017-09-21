@@ -32,7 +32,6 @@ ul{
 }
 li{
   list-style: none;
-
 }
 
 a {

@@ -26,13 +26,13 @@
       data (){
           return {
             ticket_id : '',
-            gradesData : null
+            gradesData : []
           }
       },
     methods : {
       getGrades : function(){
           var vm = this ;
-          this.ticket_id = JSON.parse(localStorage.getItem('userInfo'))[0].ticket_id;console.log(this.ticket_id)
+          this.ticket_id = JSON.parse(localStorage.getItem('userInfo'))[0].ticket_id;
           this.$axios.post('user/test/results',{ticket_id : this.ticket_id}).then(function(result){
               vm.gradesData = result.data.data;
           })

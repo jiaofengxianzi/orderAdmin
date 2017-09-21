@@ -205,22 +205,27 @@
         var order_id = localStorage.getItem('order_id');
         //console.log(order_id)
         vm.$axios.post('order/pay',{order_id:order_id,pay_path:PC,pay_platform:payNum}).then(function(data){
-          //获取支付地址
-          vm.redirect_url = data.data.data.redirect_url;
-          if(vm.isActive=="alipay"){
-            vm.aliPay = true ;
-            window.open(vm.redirect_url);
-            return false;
-          }else if(vm.isActive=="weixin"){
-            vm.showErweima = true ;
-            jQuery("#ewm_con").qrcode({
-              text: vm.redirect_url,
-              width:190,
-              height:190
-            });
-            setInterval(vm.loop,2000)
-            return false;
-          }
+            if(data.data.ret == 0){
+              //获取支付地址
+              vm.redirect_url = data.data.data.redirect_url;
+              if(vm.isActive=="alipay"){
+                vm.aliPay = true ;
+                window.open(vm.redirect_url);
+                return false;
+              }else if(vm.isActive=="weixin"){
+                vm.showErweima = true ;
+                jQuery("#ewm_con").qrcode({
+                  text: vm.redirect_url,
+                  width:190,
+                  height:190
+                });
+                setInterval(vm.loop,2000)
+                return false;
+              }
+            }else{
+              vm.$store.dispatch('showTips', data.data.res_info);
+            }
+
         });
 
       },

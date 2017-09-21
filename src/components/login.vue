@@ -17,8 +17,8 @@
       <div class="loginBox">
         <div class="title">账号登录</div>
         <input type="text" value="" v-model="ticket_number" placeholder="请输入你的准考证">
-        <input type="text" value="" v-model="user_card_id" placeholder="请输入你的身份证">
-        <button  v-on:click="doLogin">登录</button>
+        <input type="text" value="" v-model="user_card_id" @keyup.13="doLogin" placeholder="请输入你的身份证">
+        <button  v-on:click="doLogin" >登录</button>
         <p>提示信息：</p>
         <p>1.若考生身份证和准考证核对无误，多次登录无效请联系：</p>
         <p>0574—xxxxxxxx</p>
@@ -202,5 +202,18 @@ export default {
     text-align: left;
     height: 20px;
     margin: auto;
+  }
+  @media screen and (max-width: 1400px){
+    .loginBox{
+      top: 20px;
+    }
+    .main .loginBg {
+      background-position: -250px -115px;
+    }
+    .main{
+
+      height: 760px;
+
+    }
   }
 </style>

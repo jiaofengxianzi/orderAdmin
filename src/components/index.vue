@@ -52,6 +52,9 @@
             </label>
           </td>
         </tr>
+        <tr>
+          <td colspan="4" style="text-align: center" v-if="detailsData.length == 0">无报考信息</td>
+        </tr>
       </tbody>
     </table>
       <input type="button" @click="checkForm" value="信息准确，进入下一步">
@@ -93,7 +96,6 @@ export default {
             //获取当前考试计划信息
             vm.$axios.post('user/plans',{'ticket_id':vm.ticket_id}).then(function(plan){
               //每一条考试计划加exam_id
-
               plan.data.data.plan_details.forEach(function(i){
                 var arr1 =[];
                   i.exam_place.forEach(function(j){
@@ -109,8 +111,6 @@ export default {
               vm.specialtyName = plan.data.data.specialty.specialty_name;
               //考点
               vm.exam_place = plan.data.data.plan_details[0].exam_place;
-
-
               var palceArr1 = [];
               for(var i = 0 ; i<vm.detailsData.length;i++){
                 for(var j = 0 ; j < vm.detailsData[i].exam_place.length; j++ ){
@@ -133,19 +133,6 @@ export default {
               //console.log(palceArr.filter())
               vm.palceArr = palceArr1.filter1();
 
-              //去重
-//              Array.prototype.unique = function(){
-//                var res = [];
-//                var json = {};
-//                for(var i = 0; i < this.length; i++){
-//                  if(!json[this[i]]){
-//                    res.push(this[i]);
-//                    json[this[i]] = 1;
-//                  }
-//                }
-//                return res;
-//              }
-
             })
           })
         },
@@ -164,12 +151,13 @@ export default {
           //从子vuex获取准考证id
           vm.ticket_id = this.$store.state.userInfo[0].ticket_id;
           vm.$axios.post('plan/confirm',{place_id:vm.place_id,plan_ids:vm.plan_ids,ticket_id:vm.ticket_id}).then(function(idData){
-            if(idData){
+
+            if(idData.data.ret == 0){
               //vuex更新订单id order_id
               vm.$store.dispatch('setOrderId', idData.data.data.order_id);
               vm.$router.push('/order')
-            }{
-
+            }else{
+              vm.$store.dispatch('showTips', idData.data.res_info);
             }
 
           })
