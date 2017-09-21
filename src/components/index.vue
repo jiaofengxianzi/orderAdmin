@@ -89,7 +89,7 @@ export default {
           var vm = this;
           vm.$axios.post('user/tickets').then(function(userInfo){
             vm.userData = userInfo.data.data;
-            vm.ticket_id = userInfo.data.data[0].ticket_id;
+            vm.ticket_id = JSON.parse(localStorage.getItem("userToken")).ticket_id;
             //vuex更新个人准考证信息
             vm.$store.dispatch('setUserInfo', userInfo.data.data);
 
@@ -149,7 +149,7 @@ export default {
           //获取订单id并到确认支付页面
           var vm = this;
           //从子vuex获取准考证id
-          vm.ticket_id = this.$store.state.userInfo[0].ticket_id;
+          vm.ticket_id = JSON.parse(localStorage.getItem("userToken")).ticket_id;
           vm.$axios.post('plan/confirm',{place_id:vm.place_id,plan_ids:vm.plan_ids,ticket_id:vm.ticket_id}).then(function(idData){
 
             if(idData.data.ret == 0){

@@ -93,7 +93,7 @@
       //获取当前的考试预约信息
       order_details : function(){
         var vm = this;
-        vm.ticket_id =JSON.parse(localStorage.getItem("userInfo"))[0].ticket_id ;
+        vm.ticket_id =JSON.parse(localStorage.getItem("userToken")).ticket_id;
         vm.$axios.post('user/reserves',{'ticket_id':vm.ticket_id}).then(function(order){
           //订单数组
           vm.reserves_list = order.data.data.reserves_list;
